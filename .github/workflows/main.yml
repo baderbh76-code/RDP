@@ -1,0 +1,42 @@
+name: ARCH_WAR_MACHINE_V2_24_7
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */6 * * *' # إعادة تشغيل السيرفر آلياً كل 6 ساعات
+
+jobs:
+  Infiltration:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # صلاحية الكتابة لرفع النتائج
+    
+    steps:
+      - name: 🛡️ Setup Stealth Tunnel (Tailscale)
+        uses: tailscale/github-action@v2
+        with:
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+
+      - name: 🧠 Deploying Arch Linux (The Fortress)
+        run: |
+          docker run -d --name arch_master --privileged --net=host \
+          archlinux:latest /bin/bash -c "
+            pacman -Syu --noconfirm && \
+            pacman -S --noconfirm nmap masscan python git openssh && \
+            echo 'root:Proot@2099#Admin' | chpasswd && \
+            /usr/sbin/sshd -D"
+
+      - name: 🛰️ Auto-Sync Loot Script (The Shield)
+        run: |
+          # سكربت صغير يقوم برفع ملف loot.txt كل ساعة إلى GitHub
+          docker exec arch_master bash -c "
+            while true; do
+              git config --global user.email 'proot@war.com'
+              git config --global user.name 'proot-master'
+              # هنا نضع أوامر حفظ النتائج
+              sleep 3600
+            done" &
+
+      - name: 💀 Final Execution
+        run: |
+          echo "Server is Online. Ready for the Great Scan."
+          sleep 21000 # العمل لمدة 5.8 ساعة
