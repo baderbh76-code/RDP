@@ -1,0 +1,7 @@
+requests
+flask
+python-dotenv
+pydantic
+langchain
+ollama
+# Add other necessary packages as needed
